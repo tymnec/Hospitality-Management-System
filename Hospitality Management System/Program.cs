@@ -7,8 +7,12 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Swashbuckle.AspNetCore;
 using System.Text;
+using Hospitality_Management_System.Persistence;
 
 namespace Hospitality_Management_System;
+
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 public class Program
 {
@@ -84,6 +88,13 @@ public class Program
             });
         });
 
+        builder.Services.AddSingleton<HospitalityContext>();
+
+        builder.Services.AddScoped<IDoctorDataAccess, DoctorEF>();
+        builder.Services.AddScoped<IPatientDataAccess, PatientEF>();
+        builder.Services.AddScoped<IAppointmentDataAccess, AppointmentEF>();
+        builder.Services.AddScoped<IBillingDataAccess, BillingEF>();
+
         var app = builder.Build();
 
         // Add Swagger middleware
@@ -106,7 +117,6 @@ public class Program
         app.UseRouting();
 
         app.MapControllers();
-
         app.Run();
     }
 }
