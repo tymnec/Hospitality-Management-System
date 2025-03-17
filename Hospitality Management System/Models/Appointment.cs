@@ -1,22 +1,33 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Hospitality_Management_System.Models
 {
     public class Appointment
     {
-        [Key]
-        public string AppointmentID { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
-        [ForeignKey("Patient")]
-        public string PatientID { get; set; }
-        public Patient Patient { get; set; }
+        [BsonElement("patientId")]
+        [Required]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string PatientID { get; set; }
 
-        [ForeignKey("Doctor")]
-        public string DoctorID { get; set; }
-        public Doctor Doctor { get; set; }
+        [BsonElement("doctorId")]
+        [Required]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string DoctorID { get; set; }
 
-        public DateTime AppointmentDate { get; set; }
-        public string Status { get; set; }
+        [BsonElement("appointmentDate")]
+        [Required]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        public required DateTime AppointmentDate { get; set; }
+
+        [BsonElement("status")]
+        [Required]
+        [StringLength(50, ErrorMessage = "Status cannot be longer than 50 characters.")]
+        public required string Status { get; set; }
     }
 }

@@ -52,14 +52,14 @@ namespace HospitalityManagementSystem.Controllers
             }
 
             _ = _appointmentService.CreateAppointmentAsync(appointment);
-            return CreatedAtAction(nameof(GetAppointmentById), new { id = appointment.AppointmentID }, appointment);
+            return CreatedAtAction(nameof(GetAppointmentById), new { id = appointment.Id }, appointment);
         }
 
         // Update an appointment
         [HttpPut("{id}")]
         public ActionResult UpdateAppointment(string id, [FromBody] Appointment appointment)
         {
-            if (appointment == null || appointment.AppointmentID != id)
+            if (appointment == null || appointment.Id != id)
             {
                 return BadRequest("Appointment ID mismatch.");
             }
@@ -89,3 +89,10 @@ namespace HospitalityManagementSystem.Controllers
         }
     }
 }
+
+// {
+//   "patientID": "67d7d55eb46950136437d272",
+//   "doctorID": "67d7d504b46950136437d271",
+//   "appointmentDate": "2025-03-17T07:55:12.342Z",
+//   "status": "Scheduled"
+// }

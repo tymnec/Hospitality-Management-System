@@ -24,7 +24,7 @@ namespace HospitalityManagementSystem.Services
         // Get appointment by ID
         public async Task<Appointment?> GetAppointmentByIdAsync(string id)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.AppointmentID, id);
+            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, id);
             return await _appointments.Find(filter).FirstOrDefaultAsync();
         }
 
@@ -32,7 +32,7 @@ namespace HospitalityManagementSystem.Services
         public async Task<bool> CreateAppointmentAsync(Appointment appointment)
         {
             // Check if an appointment already exists with the same ID (if necessary)
-            var existingAppointment = await _appointments.Find(a => a.AppointmentID == appointment.AppointmentID).FirstOrDefaultAsync();
+            var existingAppointment = await _appointments.Find(a => a.Id == appointment.Id).FirstOrDefaultAsync();
             if (existingAppointment != null) return false;
 
             await _appointments.InsertOneAsync(appointment);
@@ -42,7 +42,7 @@ namespace HospitalityManagementSystem.Services
         // Update an existing appointment
         public async Task<bool> UpdateAppointmentAsync(Appointment appointment)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.AppointmentID, appointment.AppointmentID);
+            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, appointment.Id);
             var updateResult = await _appointments.ReplaceOneAsync(filter, appointment);
             return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
         }
@@ -50,7 +50,7 @@ namespace HospitalityManagementSystem.Services
         // Delete an appointment by ID
         public async Task<bool> DeleteAppointmentAsync(string id)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.AppointmentID, id);
+            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, id);
             var deleteResult = await _appointments.DeleteOneAsync(filter);
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
         }

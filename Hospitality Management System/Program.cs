@@ -49,6 +49,7 @@ public class Program
         builder.Services.AddScoped<AppointmentService>();
         builder.Services.AddScoped<BillingService>();
         builder.Services.AddScoped<PatientService>();
+        builder.Services.AddScoped<DoctorService>();
 
         // JWT Authentication
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

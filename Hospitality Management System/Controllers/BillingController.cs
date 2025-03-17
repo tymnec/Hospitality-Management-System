@@ -54,14 +54,14 @@ namespace HospitalityManagementSystem.Controllers
             }
 
             _ = _billingService.CreateBillingAsync(billing);
-            return CreatedAtAction(nameof(GetBillingById), new { id = billing.BillID }, billing);
+            return CreatedAtAction(nameof(GetBillingById), new { id = billing.Id }, billing);
         }
 
         // Update Billing
         [HttpPut("{id}")]
         public ActionResult UpdateBilling(string id, [FromBody] Billing billing)
         {
-            if (billing == null || billing.BillID != id)
+            if (billing == null || billing.Id != id)
             {
                 return BadRequest("Billing ID mismatch.");
             }

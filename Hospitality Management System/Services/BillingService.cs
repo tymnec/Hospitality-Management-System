@@ -24,15 +24,15 @@ namespace HospitalityManagementSystem.Services
         // Get billing by ID
         public async Task<Billing?> GetBillingByIdAsync(string id)
         {
-            var filter = Builders<Billing>.Filter.Eq(b => b.BillID, id);
+            var filter = Builders<Billing>.Filter.Eq(b => b.Id, id);
             return await _billings.Find(filter).FirstOrDefaultAsync();
         }
 
         // Create a new billing record
         public async Task<bool> CreateBillingAsync(Billing billing)
         {
-            // Check if a billing with the same BillID already exists (optional, depending on your use case)
-            var existingBilling = await _billings.Find(b => b.BillID == billing.BillID).FirstOrDefaultAsync();
+            // Check if a billing with the same BillId already exists (optional, depending on your use case)
+            var existingBilling = await _billings.Find(b => b.Id == billing.Id).FirstOrDefaultAsync();
             if (existingBilling != null) return false;
 
             await _billings.InsertOneAsync(billing);
@@ -42,7 +42,7 @@ namespace HospitalityManagementSystem.Services
         // Update an existing billing record
         public async Task<bool> UpdateBillingAsync(Billing billing)
         {
-            var filter = Builders<Billing>.Filter.Eq(b => b.BillID, billing.BillID);
+            var filter = Builders<Billing>.Filter.Eq(b => b.Id, billing.Id);
             var updateResult = await _billings.ReplaceOneAsync(filter, billing);
             return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
         }
@@ -50,7 +50,7 @@ namespace HospitalityManagementSystem.Services
         // Delete a billing record by ID
         public async Task<bool> DeleteBillingAsync(string id)
         {
-            var filter = Builders<Billing>.Filter.Eq(b => b.BillID, id);
+            var filter = Builders<Billing>.Filter.Eq(b => b.Id, id);
             var deleteResult = await _billings.DeleteOneAsync(filter);
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
         }
