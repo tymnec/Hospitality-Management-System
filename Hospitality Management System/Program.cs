@@ -7,15 +7,19 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Swashbuckle.AspNetCore;
 using System.Text;
-using Hospitality_Management_System.Persistence;
 
 namespace Hospitality_Management_System;
 
-using MongoDB.Bson;
-using MongoDB.Driver;
-
 public class Program
 {
+    /// <summary>
+    /// Main method of the application.
+    /// </summary>
+    /// <param name="args">Command line arguments.</param>
+    /// <remarks>
+    /// This method is the entry point of the application. It configures the services, sets up the database connection,
+    /// and starts the web server.
+    /// </remarks>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -88,13 +92,6 @@ public class Program
             });
         });
 
-        builder.Services.AddSingleton<HospitalityContext>();
-
-        builder.Services.AddScoped<IDoctorDataAccess, DoctorEF>();
-        builder.Services.AddScoped<IPatientDataAccess, PatientEF>();
-        builder.Services.AddScoped<IAppointmentDataAccess, AppointmentEF>();
-        builder.Services.AddScoped<IBillingDataAccess, BillingEF>();
-
         var app = builder.Build();
 
         // Add Swagger middleware
@@ -117,7 +114,7 @@ public class Program
         app.UseRouting();
 
         app.MapControllers();
+
         app.Run();
     }
 }
-
