@@ -1,4 +1,9 @@
+using Hospitality_Management_System.Persistence;
+
 namespace Hospitality_Management_System;
+
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 public class Program
 {
@@ -6,9 +11,18 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+
+     
         // Add services to the container.
 
         builder.Services.AddControllersWithViews();
+
+        builder.Services.AddSingleton<HospitalityContext>();
+
+        builder.Services.AddScoped<IDoctorDataAccess, DoctorEF>();
+        builder.Services.AddScoped<IPatientDataAccess, PatientEF>();
+        builder.Services.AddScoped<IAppointmentDataAccess, AppointmentEF>();
+        builder.Services.AddScoped<IBillingDataAccess, BillingEF>();
 
         var app = builder.Build();
 
@@ -24,11 +38,13 @@ public class Program
         app.UseRouting();
 
 
+
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller}/{action=Index}/{id?}");
 
         app.MapFallbackToFile("index.html");
+
 
         app.Run();
     }
