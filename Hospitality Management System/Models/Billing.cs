@@ -15,16 +15,10 @@ namespace Hospitality_Management_System.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public required string PatientID { get; set; }
 
-        [BsonIgnore]
-        public Patient? Patient { get; set; }
-
         [BsonElement("appointmentId")]
         [Required]
         [BsonRepresentation(BsonType.ObjectId)]
         public required string AppointmentID { get; set; }
-
-        [BsonIgnore]
-        public Appointment? Appointment { get; set; }
 
         [BsonElement("amount")]
         [Required]

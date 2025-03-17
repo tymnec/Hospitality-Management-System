@@ -1,10 +1,9 @@
 using Hospitality_Management_System.Models;
-using HospitalityManagementSystem.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HospitalityManagementSystem.Services
+namespace Hospitality_Management_System.Services
 {
     public class AppointmentService
     {
@@ -15,49 +14,36 @@ namespace HospitalityManagementSystem.Services
             _appointments = database.GetCollection<Appointment>("Appointments");
         }
 
-        // Get all appointments
-        public async Task<List<Appointment>> GetAppointmentsAsync()
+        // Create a new appointment
+        public async Task CreateAppointmentAsync(Appointment appointment)
         {
-            return await _appointments.Find(_ => true).ToListAsync();
+            await _appointments.InsertOneAsync(appointment);
         }
 
         // Get appointment by ID
         public async Task<Appointment?> GetAppointmentByIdAsync(string id)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, id);
-            return await _appointments.Find(filter).FirstOrDefaultAsync();
+            return await _appointments.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        // Create a new appointment
-        public async Task<bool> CreateAppointmentAsync(Appointment appointment)
+        // Get all appointments
+        public async Task<List<Appointment>> GetAllAppointmentsAsync()
         {
-            // Check if an appointment already exists with the same ID (if necessary)
-            var existingAppointment = await _appointments.Find(a => a.Id == appointment.Id).FirstOrDefaultAsync();
-            if (existingAppointment != null) return false;
-
-            await _appointments.InsertOneAsync(appointment);
-            return true;
+            return await _appointments.Find(_ => true).ToListAsync();
         }
 
-        // Update an existing appointment
-        public async Task<bool> UpdateAppointmentAsync(Appointment appointment)
+        // Update an appointment
+        public async Task<bool> UpdateAppointmentAsync(string id, Appointment updatedAppointment)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, appointment.Id);
-            var updateResult = await _appointments.ReplaceOneAsync(filter, appointment);
-            return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
+            var result = await _appointments.ReplaceOneAsync(a => a.Id == id, updatedAppointment);
+            return result.ModifiedCount > 0;
         }
 
         // Delete an appointment by ID
         public async Task<bool> DeleteAppointmentAsync(string id)
         {
-            var filter = Builders<Appointment>.Filter.Eq(a => a.Id, id);
-            var deleteResult = await _appointments.DeleteOneAsync(filter);
-            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
-        }
-
-        internal void UpdateAppointment(Appointment appointment)
-        {
-            throw new NotImplementedException();
+            var result = await _appointments.DeleteOneAsync(a => a.Id == id);
+            return result.DeletedCount > 0;
         }
     }
 }

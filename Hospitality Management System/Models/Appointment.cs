@@ -1,9 +1,17 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Hospitality_Management_System.Models
 {
+    public enum AppointmentStatus
+    {
+        Scheduled,
+        Completed,
+        Cancelled
+    }
+
     public class Appointment
     {
         [BsonId]
@@ -13,21 +21,20 @@ namespace Hospitality_Management_System.Models
         [BsonElement("patientId")]
         [Required]
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string PatientID { get; set; }
+        public required string PatientId { get; set; }
 
         [BsonElement("doctorId")]
         [Required]
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string DoctorID { get; set; }
+        public required string DoctorId { get; set; }
 
         [BsonElement("appointmentDate")]
         [Required]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        [BsonRepresentation(BsonType.DateTime)]
         public required DateTime AppointmentDate { get; set; }
 
         [BsonElement("status")]
         [Required]
-        [StringLength(50, ErrorMessage = "Status cannot be longer than 50 characters.")]
-        public required string Status { get; set; }
+        public required AppointmentStatus Status { get; set; }
     }
 }

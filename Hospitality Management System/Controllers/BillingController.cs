@@ -1,93 +1,93 @@
 using Hospitality_Management_System.Models;
-using HospitalityManagementSystem.Models;
-using HospitalityManagementSystem.Services;
+using Hospitality_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace HospitalityManagementSystem.Controllers
+namespace Hospitality_Management_System.Controllers
 {
-    [Route("api/billing")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BillingController : ControllerBase
     {
         private readonly BillingService _billingService;
-        private readonly IConfiguration _config;
 
-        public BillingController(BillingService billingService, IConfiguration config)
+        public BillingController(BillingService billingService)
         {
             _billingService = billingService;
-            _config = config;
         }
 
-        // Get all Billings
+        // Get all billing records
         [HttpGet]
-        public ActionResult<IEnumerable<Billing>> GetBillings()
+        public async Task<ActionResult<List<Billing>>> GetAllBillings()
         {
-            var billings = _billingService.GetBillingsAsync();
-            if (billings == null || billings.Equals(null))
-            {
-                return NotFound("No billings found.");
-            }
+            var billings = await _billingService.GetAllBillingsAsync();
             return Ok(billings);
         }
 
-        // Get Billing By ID
+        // Get a billing record by ID
         [HttpGet("{id}")]
-        public ActionResult<Billing> GetBillingById(string id)
+        public async Task<ActionResult<Billing>> GetBillingById(string id)
         {
-            var billing = _billingService.GetBillingByIdAsync(id);
-
+            var billing = await _billingService.GetBillingByIdAsync(id);
             if (billing == null)
             {
-                return NotFound($"Billing with ID {id} not found.");
+                return NotFound(new { Message = "Billing record not found" });
             }
-
             return Ok(billing);
         }
 
-        // Create Billing
+        // Create a new billing record
         [HttpPost]
-        public ActionResult<Billing> CreateBilling([FromBody] Billing billing)
+        public async Task<ActionResult> CreateBilling([FromBody] Billing billing)
         {
             if (billing == null)
             {
-                return BadRequest("Billing data is required.");
+                return BadRequest(new { Message = "Invalid billing data" });
             }
 
-            _ = _billingService.CreateBillingAsync(billing);
+            await _billingService.CreateBillingAsync(billing);
             return CreatedAtAction(nameof(GetBillingById), new { id = billing.Id }, billing);
         }
 
-        // Update Billing
+        // Update a billing record
         [HttpPut("{id}")]
-        public ActionResult UpdateBilling(string id, [FromBody] Billing billing)
+        public async Task<ActionResult> UpdateBilling(string id, [FromBody] Billing updatedBilling)
         {
-            if (billing == null || billing.Id != id)
-            {
-                return BadRequest("Billing ID mismatch.");
-            }
-
-            var existingBilling = _billingService.GetBillingByIdAsync(id);
+            var existingBilling = await _billingService.GetBillingByIdAsync(id);
             if (existingBilling == null)
             {
-                return NotFound($"Billing with ID {id} not found.");
+                return NotFound(new { Message = "Billing record not found" });
             }
 
-            _ = _billingService.UpdateBillingAsync(billing);
-            return NoContent();  // HTTP 204 No Content, indicating successful update
+            updatedBilling.Id = id; // Ensure the ID remains the same
+            var updateResult = await _billingService.UpdateBillingAsync(id, updatedBilling);
+
+            if (!updateResult)
+            {
+                return StatusCode(500, new { Message = "Failed to update billing record" });
+            }
+
+            return NoContent();
         }
 
-        // Delete Billing
+        // Delete a billing record
         [HttpDelete("{id}")]
-        public ActionResult DeleteBilling(string id)
+        public async Task<ActionResult> DeleteBilling(string id)
         {
-            var billing = _billingService.GetBillingByIdAsync(id);
-            if (billing == null)
+            var existingBilling = await _billingService.GetBillingByIdAsync(id);
+            if (existingBilling == null)
             {
-                return NotFound($"Billing with ID {id} not found.");
+                return NotFound(new { Message = "Billing record not found" });
             }
 
-            _ = _billingService.DeleteBillingAsync(id);
-            return NoContent();  // HTTP 204 No Content, indicating successful deletion
+            var deleteResult = await _billingService.DeleteBillingAsync(id);
+            if (!deleteResult)
+            {
+                return StatusCode(500, new { Message = "Failed to delete billing record" });
+            }
+
+            return NoContent();
         }
     }
 }

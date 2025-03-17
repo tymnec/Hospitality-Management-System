@@ -1,11 +1,12 @@
 using Hospitality_Management_System.Models;
-using HospitalityManagementSystem.Models;
-using HospitalityManagementSystem.Services;
+using Hospitality_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace HospitalityManagementSystem.Controllers
+namespace Hospitality_Management_System.Controllers
 {
-    [Route("api/appointments")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AppointmentController : ControllerBase
     {
@@ -18,81 +19,75 @@ namespace HospitalityManagementSystem.Controllers
 
         // Get all appointments
         [HttpGet]
-        public ActionResult<IEnumerable<Appointment>> GetAppointments()
+        public async Task<ActionResult<List<Appointment>>> GetAllAppointments()
         {
-            var appointments = _appointmentService.GetAppointmentsAsync();
-            if (appointments == null || appointments.Equals(null))
-            {
-                return NotFound("No appointments found.");
-            }
+            var appointments = await _appointmentService.GetAllAppointmentsAsync();
             return Ok(appointments);
         }
 
-        // Get appointment by ID
+        // Get an appointment by ID
         [HttpGet("{id}")]
-        public ActionResult<Appointment> GetAppointmentById(string id)
+        public async Task<ActionResult<Appointment>> GetAppointmentById(string id)
         {
-            var appointment = _appointmentService.GetAppointmentByIdAsync(id);
-
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
             if (appointment == null)
             {
-                return NotFound($"Appointment with ID {id} not found.");
+                return NotFound(new { Message = "Appointment not found" });
             }
-
             return Ok(appointment);
         }
 
-        // Create an appointment
+        // Create a new appointment
         [HttpPost]
-        public ActionResult<Appointment> CreateAppointment([FromBody] Appointment appointment)
+        public async Task<ActionResult> CreateAppointment([FromBody] Appointment appointment)
         {
             if (appointment == null)
             {
-                return BadRequest("Appointment data is required.");
+                return BadRequest(new { Message = "Invalid appointment data" });
             }
 
-            _ = _appointmentService.CreateAppointmentAsync(appointment);
+            await _appointmentService.CreateAppointmentAsync(appointment);
             return CreatedAtAction(nameof(GetAppointmentById), new { id = appointment.Id }, appointment);
         }
 
         // Update an appointment
         [HttpPut("{id}")]
-        public ActionResult UpdateAppointment(string id, [FromBody] Appointment appointment)
+        public async Task<ActionResult> UpdateAppointment(string id, [FromBody] Appointment updatedAppointment)
         {
-            if (appointment == null || appointment.Id != id)
-            {
-                return BadRequest("Appointment ID mismatch.");
-            }
-
-            var existingAppointment = _appointmentService.GetAppointmentByIdAsync(id);
+            var existingAppointment = await _appointmentService.GetAppointmentByIdAsync(id);
             if (existingAppointment == null)
             {
-                return NotFound($"Appointment with ID {id} not found.");
+                return NotFound(new { Message = "Appointment not found" });
             }
 
-            _appointmentService.UpdateAppointment(appointment);
-            return NoContent();  // HTTP 204 No Content, indicating successful update
+            updatedAppointment.Id = id; // Ensure the ID remains the same
+            var updateResult = await _appointmentService.UpdateAppointmentAsync(id, updatedAppointment);
+
+            if (!updateResult)
+            {
+                return StatusCode(500, new { Message = "Failed to update appointment" });
+            }
+
+            return NoContent();
         }
 
         // Delete an appointment
         [HttpDelete("{id}")]
-        public ActionResult DeleteAppointment(string id)
+        public async Task<ActionResult> DeleteAppointment(string id)
         {
-            var appointment = _appointmentService.GetAppointmentByIdAsync(id);
-            if (appointment == null)
+            var existingAppointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (existingAppointment == null)
             {
-                return NotFound($"Appointment with ID {id} not found.");
+                return NotFound(new { Message = "Appointment not found" });
             }
 
-            _ = _appointmentService.DeleteAppointmentAsync(id);
-            return NoContent();  // HTTP 204 No Content, indicating successful deletion
+            var deleteResult = await _appointmentService.DeleteAppointmentAsync(id);
+            if (!deleteResult)
+            {
+                return StatusCode(500, new { Message = "Failed to delete appointment" });
+            }
+
+            return NoContent();
         }
     }
 }
-
-// {
-//   "patientID": "67d7d55eb46950136437d272",
-//   "doctorID": "67d7d504b46950136437d271",
-//   "appointmentDate": "2025-03-17T07:55:12.342Z",
-//   "status": "Scheduled"
-// }

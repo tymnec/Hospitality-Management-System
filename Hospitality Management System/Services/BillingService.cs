@@ -1,10 +1,9 @@
 using Hospitality_Management_System.Models;
-using HospitalityManagementSystem.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HospitalityManagementSystem.Services
+namespace Hospitality_Management_System.Services
 {
     public class BillingService
     {
@@ -15,44 +14,36 @@ namespace HospitalityManagementSystem.Services
             _billings = database.GetCollection<Billing>("Billings");
         }
 
-        // Get all billings
-        public async Task<List<Billing>> GetBillingsAsync()
+        // Create a new billing record
+        public async Task CreateBillingAsync(Billing billing)
+        {
+            await _billings.InsertOneAsync(billing);
+        }
+
+        // Get billing record by ID
+        public async Task<Billing?> GetBillingByIdAsync(string id)
+        {
+            return await _billings.Find(b => b.Id == id).FirstOrDefaultAsync();
+        }
+
+        // Get all billing records
+        public async Task<List<Billing>> GetAllBillingsAsync()
         {
             return await _billings.Find(_ => true).ToListAsync();
         }
 
-        // Get billing by ID
-        public async Task<Billing?> GetBillingByIdAsync(string id)
+        // Update a billing record
+        public async Task<bool> UpdateBillingAsync(string id, Billing updatedBilling)
         {
-            var filter = Builders<Billing>.Filter.Eq(b => b.Id, id);
-            return await _billings.Find(filter).FirstOrDefaultAsync();
-        }
-
-        // Create a new billing record
-        public async Task<bool> CreateBillingAsync(Billing billing)
-        {
-            // Check if a billing with the same BillId already exists (optional, depending on your use case)
-            var existingBilling = await _billings.Find(b => b.Id == billing.Id).FirstOrDefaultAsync();
-            if (existingBilling != null) return false;
-
-            await _billings.InsertOneAsync(billing);
-            return true;
-        }
-
-        // Update an existing billing record
-        public async Task<bool> UpdateBillingAsync(Billing billing)
-        {
-            var filter = Builders<Billing>.Filter.Eq(b => b.Id, billing.Id);
-            var updateResult = await _billings.ReplaceOneAsync(filter, billing);
-            return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
+            var result = await _billings.ReplaceOneAsync(b => b.Id == id, updatedBilling);
+            return result.ModifiedCount > 0;
         }
 
         // Delete a billing record by ID
         public async Task<bool> DeleteBillingAsync(string id)
         {
-            var filter = Builders<Billing>.Filter.Eq(b => b.Id, id);
-            var deleteResult = await _billings.DeleteOneAsync(filter);
-            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+            var result = await _billings.DeleteOneAsync(b => b.Id == id);
+            return result.DeletedCount > 0;
         }
     }
 }
