@@ -1,0 +1,17 @@
+.doctors-list {
+    display: flex;
+    flex-wrap: row;
+    gap: 30px;
+    margin-top: 65px;
+  }
+  
+  .doctor-card {
+    background-color: white;
+    color: black;
+    padding: 80px;
+    border-radius: 8px;
+    text-align: center;
+
+    min-width: 300px;
+  }
+  
