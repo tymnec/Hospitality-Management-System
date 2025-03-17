@@ -1,3 +1,9 @@
+using HospitalityManagementSystem.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using System.Text;
+
 namespace Hospitality_Management_System;
 
 public class Program
@@ -6,29 +12,43 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // Configure MongoDB
+        var mongoClient = new MongoClient(builder.Configuration["MongoDB:ConnectionString"]);
+        var database = mongoClient.GetDatabase(builder.Configuration["MongoDB:DatabaseName"]);
+        builder.Services.AddSingleton(database);
 
-        builder.Services.AddControllersWithViews();
+        // Add User Service
+        builder.Services.AddScoped<UserService>();
+
+        // JWT Authentication
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                };
+            });
+
+        builder.Services.AddAuthorization();
+        builder.Services.AddControllers();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
 
-
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller}/{action=Index}/{id?}");
-
-        app.MapFallbackToFile("index.html");
+        app.MapControllers();
 
         app.Run();
     }
