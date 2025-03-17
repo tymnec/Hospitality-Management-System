@@ -1,0 +1,6 @@
+﻿services:
+  hospitality management systemhospitalitymanagementsystem:
+    image: hospitality management systemhospitalitymanagementsystem
+    build:
+      context: .
+      dockerfile: Hospitality Management System/Dockerfile
