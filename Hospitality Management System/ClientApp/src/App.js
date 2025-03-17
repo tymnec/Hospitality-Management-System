@@ -20,8 +20,7 @@ export default class App extends Component {
         <Routes>
           {/* You can manually define routes for login and dashboard if needed */}
           <Route path="/login" element={<Login />} />
-
-          {/* Private route for dashboard */}
+          {/* Private route for dashboard
           <Route
             path="/dashboard"
             element={
@@ -29,8 +28,7 @@ export default class App extends Component {
                 <Home />
               </PrivateRoute>
             }
-          />
-
+          /> */}
           {/* Add additional dynamic routes using AppRoutes */}
           {AppRoutes.map((route, index) => {
             const { element, ...rest } = route;
