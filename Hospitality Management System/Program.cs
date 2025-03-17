@@ -1,3 +1,4 @@
+using Hospitality_Management_System.Services;
 using HospitalityManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +46,9 @@ public class Program
 
         // Add User Service
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<AppointmentService>();
+        builder.Services.AddScoped<BillingService>();
+        builder.Services.AddScoped<PatientService>();
 
         // JWT Authentication
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

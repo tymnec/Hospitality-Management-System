@@ -1,33 +1,86 @@
-using System.Collections.Generic;
 using Hospitality_Management_System.Models;
-using Hospitality_Management_System.Persistence;
+using Hospitality_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Hospitality_Management_System.Controllers
 {
-    [Route("api/patients")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly IPatientDataAccess _dataAccess;
+        private readonly PatientService _patientService;
 
-        public PatientController(IPatientDataAccess dataAccess)
+        public PatientController(PatientService patientService)
         {
-            _dataAccess = dataAccess;
+            _patientService = patientService;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Patient>> GetPatients()
+        // POST: api/patient
+        [HttpPost]
+        public async Task<IActionResult> CreatePatient([FromBody] Patient patient)
         {
-            var patients = _dataAccess.GetPatients();
+            if (patient == null)
+            {
+                return BadRequest("Patient data is null.");
+            }
+
+            await _patientService.CreatePatientAsync(patient);
+            return CreatedAtAction(nameof(GetPatient), new { id = patient.Id }, patient);
+        }
+
+        // GET: api/patient/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPatient(string id)
+        {
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null)
+            {
+                return NotFound($"Patient with ID {id} not found.");
+            }
+            return Ok(patient);
+        }
+
+        // GET: api/patient
+        [HttpGet]
+        public async Task<IActionResult> GetAllPatients()
+        {
+            var patients = await _patientService.GetAllPatientsAsync();
             return Ok(patients);
         }
 
-        [HttpPost]
-        public ActionResult<Patient> AddPatient(Patient patient)
+        // PUT: api/patient/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePatient(string id, [FromBody] Patient updatedPatient)
         {
-            _dataAccess.InsertPatient(patient);
-            return CreatedAtAction(nameof(GetPatients), new { id = patient.PatientID }, patient);
+            if (updatedPatient == null)
+            {
+                return BadRequest("Updated patient data is null.");
+            }
+
+            var existingPatient = await _patientService.GetPatientByIdAsync(id);
+            if (existingPatient == null)
+            {
+                return NotFound($"Patient with ID {id} not found.");
+            }
+
+            updatedPatient.Id = id; // Ensure the updated patient retains the same ID
+            await _patientService.UpdatePatientAsync(id, updatedPatient);
+            return NoContent(); // Successfully updated
+        }
+
+        // DELETE: api/patient/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePatient(string id)
+        {
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null)
+            {
+                return NotFound($"Patient with ID {id} not found.");
+            }
+
+            await _patientService.DeletePatientAsync(id);
+            return NoContent(); // Successfully deleted
         }
     }
 }
