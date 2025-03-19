@@ -32,6 +32,13 @@ namespace HospitalityManagementSystem.Services
             return true;
         }
 
+        // Fetch a user by ID from the database
+        public async Task<User?> GetUserByIdAsync(string userId)
+        {
+            return await _users.Find(u => userId == u.Id).FirstOrDefaultAsync();
+        }
+
+
         private static string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();

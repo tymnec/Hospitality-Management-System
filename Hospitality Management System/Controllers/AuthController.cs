@@ -39,6 +39,41 @@ namespace HospitalityManagementSystem.Controllers
             return Ok(new { Token = token });
         }
 
+        // Get Settings: Get the settings of the currently authenticated user
+        [HttpGet("settings")]
+        public async Task<IActionResult> GetSettings()
+        {
+            // Extract the JWT token from the Authorization header
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized("Token is missing.");
+
+            var userId = GetUserIdFromToken(token);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User not authenticated.");
+
+            // Fetch user from the database
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            // Assuming that 'user.Settings' contains the user's settings or preferences
+            return Ok(user);  // Return the user's settings
+        }
+
+        // Helper function to extract user ID from JWT token
+        private string? GetUserIdFromToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            if (jwtToken == null) return null;
+
+            var userIdClaim = jwtToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            return userIdClaim?.Value;
+        }
+
         private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
