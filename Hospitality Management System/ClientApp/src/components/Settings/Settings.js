@@ -6,6 +6,7 @@ import useSettingsFormState from "./SettingsFormState";
 const Settings = () => {
   const {
     formData,
+    setFormData, // Destructure setFormData
     handleChange,
     handleSubmit,
     generateRandomUsername,
@@ -17,6 +18,7 @@ const Settings = () => {
     <div className="container mt-5">
       <SettingsUiComponents
         formData={formData}
+        setFormData={setFormData} // Pass setFormData to SettingsUiComponents
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         generateRandomUsername={generateRandomUsername}

@@ -18,12 +18,12 @@ const useSettingsFormState = () => {
   });
 
   useEffect(() => {
-    fetchUserData(setFormData);
+    fetchUserData(setFormData); // Make sure the function is receiving setFormData
   }, [setFormData]);
 
   return {
     formData,
-    setFormData,
+    setFormData, // Return setFormData along with other functions
     handleChange,
     generateRandomUsername,
     handleEmailDomainChange,
