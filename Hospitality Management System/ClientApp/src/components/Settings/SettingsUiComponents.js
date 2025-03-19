@@ -2,18 +2,6 @@ import React from "react";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import { AiOutlineMail } from "react-icons/ai";
 
-/**
- * Component for displaying the settings form.
- *
- * @prop {Object} formData - Current form data.
- * @prop {function} handleChange - Function to handle changes in form data.
- * @prop {function} handleSubmit - Function to handle form submission.
- * @prop {function} generateRandomUsername - Function to generate a random username.
- * @prop {function} handleEmailDomainChange - Function to handle changes in email domain.
- * @prop {boolean} isFormValid - Whether the form is valid.
- *
- * @returns {React.ReactElement} - Settings form component.
- */
 const SettingsUiComponents = ({
   formData,
   handleChange,
@@ -98,7 +86,7 @@ const SettingsUiComponents = ({
               type="password"
               className="form-control"
               id="password"
-              name="password"
+              name="passwordHash"
               value={formData.passwordHash}
               onChange={handleChange}
               placeholder="Enter a new password"
