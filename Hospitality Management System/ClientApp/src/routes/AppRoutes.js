@@ -1,15 +1,15 @@
 // src/AppRoutes.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
-import Patients from "./components/Patients";
-import PatientDetails from "./components/PatientDetails";
-import DoctorsList from "./components/DoctorsList";
-import Appointments from "./components/Appointments";
-import Billing from "./components/Billing";
-import Layout from "./components/Layout"; // For Navbar & Sidebar
-import NotFound from "./components/NotFound";
+import Home from "../components/App/Home/Home.js";
+import Login from "../components/Login";
+import Dashboard from "../components/Dashboard";
+import Patients from "../components/Patients";
+import PatientDetails from "../components/PatientDetails";
+import DoctorsList from "../components/DoctorsList";
+import Appointments from "../components/Appointments";
+import Billing from "../components/Billing";
+import Layout from "../components/App/Layout"; // For Navbar & Sidebar
+import NotFound from "../components/NotFound";
 
 function AppRoutes() {
   return (

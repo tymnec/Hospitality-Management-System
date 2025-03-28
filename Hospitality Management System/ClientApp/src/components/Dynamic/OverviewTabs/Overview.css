@@ -1,0 +1,35 @@
+.overview {
+  padding: 20px;
+}
+
+.overview h2 {
+  margin-bottom: 20px;
+}
+
+.overview .nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+
+.overview .nav-tabs .nav-link {
+  border: none;
+  padding: 10px;
+  color: #333;
+}
+
+.overview .nav-tabs .nav-link.active {
+  background-color: #fff;
+  border-bottom: 2px solid #333;
+  color: #333;
+}
+
+.overview .tab-content {
+  padding: 20px;
+}
+
+.overview .tab-content .tab-pane {
+  display: none;
+}
+
+.overview .tab-content .tab-pane.active {
+  display: block;
+}
