@@ -19,6 +19,11 @@ body {
   align-items: center;
   background-color: #333;
   padding: 15px 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
 }
 
 .navbar .logo a {
@@ -27,22 +32,40 @@ body {
   text-decoration: none;
 }
 
-.nav-links {
+.navbar-nav {
   list-style-type: none;
   display: flex;
 }
 
-.nav-links li {
+.navbar-nav li {
   margin: 0 20px;
 }
 
-.nav-links a {
+.navbar-nav a {
   color: #fff;
   text-decoration: none;
   font-size: 18px;
   transition: color 0.3s;
 }
 
-.nav-links a:hover {
+.navbar-nav a:hover {
   color: #f4f4f4;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+
+  .navbar-nav li {
+    margin: 10px 0;
+  }
 }

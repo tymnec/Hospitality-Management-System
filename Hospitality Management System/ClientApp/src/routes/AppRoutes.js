@@ -10,6 +10,7 @@ import Appointments from "../components/Appointments";
 import Billing from "../components/Billing";
 import Layout from "../components/App/Layout"; // For Navbar & Sidebar
 import NotFound from "../components/NotFound";
+import Settings from "../components/Settings/Settings.js";
 
 function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ function AppRoutes() {
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/billing" element={<Billing />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

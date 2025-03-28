@@ -45,8 +45,7 @@ const CollapseSidebar = ({ onCollapse, handleLinkClick }) => {
       className="d-flex flex-column p-3 bg-light sticky-top"
       style={{
         backdropFilter: "blur(5px)",
-        backgroundImage:
-          "linear-gradient(to right,rgb(161, 189, 218), #f8f9fa)",
+        backgroundImage: "linear-gradient(to top,rgb(161, 189, 218), white)",
         height: "100vh",
       }}
     >
