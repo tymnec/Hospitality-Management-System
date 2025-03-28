@@ -38,6 +38,19 @@ namespace HospitalityManagementSystem.Services
             return await _users.Find(u => userId == u.Id).FirstOrDefaultAsync();
         }
 
+        // This method updates a user's information in the database
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            var filter = Builders<User>.Filter.Eq(u => u.Id, user.Id);
+            var update = Builders<User>.Update
+                .Set(u => u.Username, user.Username)
+                .Set(u => u.PasswordHash, user.PasswordHash)
+                .Set(u => u.Email, user.Email)
+                .Set(u => u.Role, user.Role);
+            var result = await _users.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
+
 
         private static string HashPassword(string password)
         {

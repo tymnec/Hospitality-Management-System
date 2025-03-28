@@ -62,6 +62,47 @@ namespace HospitalityManagementSystem.Controllers
             return Ok(user);  // Return the user's settings
         }
 
+
+        // Update User Settings: Update the settings of the currently authenticated user
+        [HttpPut("settings")]
+        public async Task<IActionResult> UpdateSettings([FromBody] User user)
+        {
+            // Extract the JWT token from the Authorization header
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized("Token is missing.");
+
+            var userId = GetUserIdFromToken(token);
+            if (string.IsNullOrEmpty(userId))
+            {
+                Console.WriteLine(token, userId);
+                return Unauthorized("User not authenticated.");
+            }
+
+            // Fetch user from the database
+            var existingUser = await _userService.GetUserByIdAsync(userId);
+            if (existingUser == null)
+                return NotFound("User not found.");
+
+            // Validate all the fields
+            if (string.IsNullOrWhiteSpace(user.Username))
+                return BadRequest("Username is required.");
+
+            if (string.IsNullOrWhiteSpace(user.Email))
+                return BadRequest("Email is required.");
+
+            if (string.IsNullOrWhiteSpace(user.Role))
+                return BadRequest("Role is required.");
+
+            // Update the user's settings
+            user.Id = existingUser.Id;
+            var success = await _userService.UpdateUserAsync(user);
+            if (!success) return BadRequest("Failed to update user settings.");
+
+            return Ok("User settings updated successfully");
+        }
+
         // Helper function to extract user ID from JWT token
         private string? GetUserIdFromToken(string token)
         {
