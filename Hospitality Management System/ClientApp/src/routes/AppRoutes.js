@@ -5,7 +5,7 @@ import Login from "../components/Login";
 import Dashboard from "../components/Dashboard";
 import Patients from "../components/Patients";
 import PatientDetails from "../components/PatientDetails";
-import DoctorsList from "../components/DoctorsList";
+import Doctors from "../components/Doctors";
 import Appointments from "../components/Appointments";
 import Billing from "../components/Billing";
 import Layout from "../components/App/Layout"; // For Navbar & Sidebar
@@ -21,7 +21,7 @@ function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/patients/:id" element={<PatientDetails />} />
-          <Route path="/doctors" element={<DoctorsList />} />
+          <Route path="/doctors" element={<Doctors />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="*" element={<NotFound />} />
